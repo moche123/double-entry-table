@@ -1,22 +1,22 @@
 
 /*
-        SECCION DE USUARIO
+        USER SECTION
 ******************************
-INGRESE LAS LETRAS CON LAS QUE DESEA TRABAJAR
-Luego ingrese simplemente un destino más
-Este está formado por una ruta
+ENTER THE LETTERS YOU WANT TO WORK WITH
+Then simply enter one more destination
+This is made up of a route
 *********************************
 */
 //A = 0, B=1, C=2 ......
-const letra = ['A','B','C','D','E','F'];
-const destinos = [{ini:0,des:1,dis:2},//De A hacia B con una distancia de 2
-    {ini:0,des:4,dis:4},//De A hacia E con una distancia de 4
-    {ini:1,des:2,dis:3},
-    {ini:2,des:3,dis:5},
-    {ini:2,des:4,dis:1},
-    {ini:3,des:0,dis:8},
-    {ini:4,des:3,dis:7},
-    {ini:5,des:0,dis:4}];
+const letters = ['A','B','C','D','E','F'];
+const destinations = [{from:0,to:1,dist:2},//From A to B with a distance of 2
+    {from:0,to:4,dist:4},//From A to E with a distance of 4
+    {from:1,to:2,dist:3},
+    {from:2,to:3,dist:5},
+    {from:2,to:4,dist:1},
+    {from:3,to:0,dist:8},
+    {from:4,to:3,dist:7},
+    {from:5,to:0,dist:4}];
 
 
 
@@ -28,78 +28,78 @@ const destinos = [{ini:0,des:1,dis:2},//De A hacia B con una distancia de 2
 
 
 
-//CODIGO
+//CODE
 
 
 const headTable = document.getElementById('headTable');
 const bodyTable = document.getElementById('bodyTable');
-const informacion = document.getElementById('informacion');
-class Punto{
-    constructor(letra){
-        this.letra = letra;
-        this.relaciones = new Array();
+const info = document.getElementById('info');
+class Node{
+    constructor(letter){
+        this.letter = letter;
+        this.relations = new Array();
     }
-    agregarDestinos(nodoDestino,distancia){
-        this.relaciones.push({nodoDestino,distancia});
+    addDestination(targetNode,distance){
+        this.relations.push({targetNode,distance});
     }
 }
-let Tabla = null;
-var Puntos = new Array();
+let Table = null;
+var Nodes = new Array();
 
 
 
 
 
-function agregarPunto(indice){
-    Puntos[indice] = new Punto(letra[indice]);
+function addNode(index){
+    Nodes[index] = new Node(letters[index]);
 }
-function agregarDestino(inicio,destino,distancia){
-    Puntos[inicio].agregarDestinos(Puntos[destino],distancia);
-}
-
-//Agrego todo los puntos
-for(let i=0;i<letra.length;i++){
-    agregarPunto(i);
+function addDestination(from,to,distance){
+    Nodes[from].addDestination(Nodes[to],distance);
 }
 
-for(let i=0;i<destinos.length;i++){
-    agregarDestino(destinos[i].ini,destinos[i].des,destinos[i].dis);
+//Add all the nodes
+for(let i=0;i<letters.length;i++){
+    addNode(i);
 }
-//FILA
+
+for(let i=0;i<destinations.length;i++){
+    addDestination(destinations[i].from,destinations[i].to,destinations[i].dist);
+}
+//ROW
 
 
-//LLENAR LA COLUMNA
-function construir(){
-    Tabla = new Array(Puntos.length+1);
-    for(let i=0;i<=Puntos.length;i++){
-    Tabla[i] = new Array(Puntos.length+1);
+//FILL THE COLUMN
+function build(){
+    Table = new Array(Nodes.length+1);
+    for(let i=0;i<=Nodes.length;i++){
+    Table[i] = new Array(Nodes.length+1);
     }
-    Tabla[0][0] = '$';
-    for(let i=1;i<Tabla.length;i++){
-        Tabla[0][i] = Puntos[i-1].letra;
+    Table[0][0] = '$';
+    for(let i=1;i<Table.length;i++){
+        Table[0][i] = Nodes[i-1].letter;
     }
-    for(let i=1;i<Tabla.length;i++){
-        Tabla[i][0] = Puntos[i-1].letra;
+    for(let i=1;i<Table.length;i++){
+        Table[i][0] = Nodes[i-1].letter;
     }
-    for(let i=0;i<Puntos.length;i++){
-        for(let j=0;j<Puntos.length;j++){
-            for(let k=0;k<Puntos[j].relaciones.length;k++){
-                if(Puntos[i].letra == Puntos[j].relaciones[k].nodoDestino.letra){
-                    console.log(Puntos[i].letra," es destino de ",Puntos[j].letra);
-                    let posicionFila;
-                    let posicionColumna;
-                    for(let l=1;l<Tabla.length;l++){
-                        if(Puntos[i].letra == Tabla[0][l]){
-                            posicionColumna = l;
+    for(let i=0;i<Nodes.length;i++){
+        for(let j=0;j<Nodes.length;j++){
+            for(let k=0;k<Nodes[j].relations.length;k++){
+                if(Nodes[i].letter == Nodes[j].relations[k].targetNode.letter){
+                    console.log(Nodes[i].letter," is destination of ",Nodes[j].letter);
+                    let rowPosition;
+                    let colPosition;
+                    for(let l=1;l<Table.length;l++){
+                        if(Nodes[i].letter == Table[0][l]){
+                            colPosition = l;
                         }
-                        if(Puntos[j].letra == Tabla[l][0]){
-                            posicionFila = l;
+                        if(Nodes[j].letter == Table[l][0]){
+                            rowPosition = l;
                         }
-                    }    
-                    informacion.innerHTML += `${Puntos[i].letra} es destino de ${Puntos[j].letra} con distancia ${Puntos[j].relaciones[k].distancia}<br>`; 
-                          
-                    console.log(" valor ",Puntos[j].relaciones[k].distancia," En [",posicionFila,"][",posicionColumna,"]");
-                    Tabla[posicionFila][posicionColumna] = Puntos[j].relaciones[k].distancia;
+                    }
+                    info.innerHTML += `${Nodes[i].letter} is destination of ${Nodes[j].letter} with distance ${Nodes[j].relations[k].distance}<br>`;
+
+                    console.log(" value ",Nodes[j].relations[k].distance," at [",rowPosition,"][",colPosition,"]");
+                    Table[rowPosition][colPosition] = Nodes[j].relations[k].distance;
                 }
             }
         }
@@ -107,39 +107,38 @@ function construir(){
 }
 
 
-function mostrarTabla(){
-    for(let i=0;i<Tabla.length;i++){
+function showTable(){
+    for(let i=0;i<Table.length;i++){
         headTable.innerHTML += `
-            <th scope="col">${Tabla[0][i]}</th>
+            <th scope="col">${Table[0][i]}</th>
         `;
     }
-    function texto(fila){
-        let texto = "";
-        for(let i=1;i<Tabla.length;i++){
-            if(Tabla[fila][i] != undefined){
-                texto += `<td class="bg-warning mr-0">${Tabla[fila][i]}</td>`;
-                
+    function text(row){
+        let text = "";
+        for(let i=1;i<Table.length;i++){
+            if(Table[row][i] != undefined){
+                text += `<td class="bg-warning mr-0">${Table[row][i]}</td>`;
+
             }
             else{
-                texto += `<td class="bg-secondary mr-0">*</td>`;
+                text += `<td class="bg-secondary mr-0">*</td>`;
             }
-            
+
         }
-      
-        return texto;
-    
+
+        return text;
+
     }
-    for(let i=1;i<Tabla.length;i++){
+    for(let i=1;i<Table.length;i++){
         bodyTable.innerHTML += `
             <tr>
-                <th scope="row">${Tabla[i][0]}</th>
-                ${texto(i)}
+                <th scope="row">${Table[i][0]}</th>
+                ${text(i)}
             </tr>
         `;
     }
 }
-construir();
-mostrarTabla();
-
+build();
+showTable();
 
 
